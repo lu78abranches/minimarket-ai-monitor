@@ -1,0 +1,16 @@
+# Python
+ai-engine/venv/
+ai-engine/__pycache__/
+ai-engine/*.pt
+ai-engine/.env
+
+# Java / Spring
+backend-api/target/
+backend-api/.mvn/
+backend-api/*.jar
+.idea/
+.vscode/
+
+# Logs e OS
+*.log
+.DS_Store

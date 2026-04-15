@@ -2,7 +2,7 @@ import requests
 import datetime
 
 class EventService:
-    def __init__(self, backend_url="http://localhost:8080/api/events"):
+    def __init__(self, backend_url="http://localhost:8082/api/events"):
         self.backend_url = backend_url
 
     def send_event(self, person_id, action):

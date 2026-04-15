@@ -7,6 +7,13 @@ def run():
     monitor = MarketMonitor()
     event_service = EventService()
 
+    # 1. Definindo uma zona de geladeira (Ex: um quadrado no canto superior esquerdo)
+# Coordenadas [x, y]
+fridge_area = np.array([
+    [10, 10], [200, 10], [200, 200], [10, 200]
+])
+monitor.add_fridge_zone(fridge_area)
+
     print("Sistema de Monitoramento Iniciado... Pressione 'q' para sair.")
 
     while cap.isOpened():
@@ -16,6 +23,10 @@ def run():
 
         # Processa IA
         annotated_frame, entered, exited = monitor.process_frame(frame)
+
+        if monitor.check_fridge_interaction(detections): # Note: você precisará passar 'detections' aqui
+            print("ALERTA: Alguém interagindo com a geladeira!")
+            # event_service.send_event(person_id=p_id, action="FRIDGE_INTERACTION")
 
         # Verifica eventos de entrada/saída
         if any(entered):

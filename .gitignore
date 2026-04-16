@@ -3,6 +3,7 @@ ai-engine/venv/
 ai-engine/__pycache__/
 ai-engine/*.pt
 ai-engine/.env
+**/*.pyc
 
 # Java / Spring
 backend-api/target/
@@ -14,3 +15,8 @@ backend-api/*.jar
 # Logs e OS
 *.log
 .DS_Store
+
+
+
+
+

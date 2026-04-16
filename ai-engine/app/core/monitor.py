@@ -16,14 +16,21 @@ class MarketMonitor:
         # Anotadores para visualização
         self.box_annotator = sv.BoxAnnotator()
         self.line_annotator = sv.LineZoneAnnotator()
-        self.zone_annotator = sv.PolygonZoneAnnotator()
+        self.zone_annotators = [] # Vamos criar uma lista de anotadores
     
     def add_fridge_zone(self, polygon: np.ndarray):
         # Cria um verificador de zona baseado no polígono enviado
         zone = sv.PolygonZone(polygon=polygon)
         self.fridge_zones.append(zone)
 
+        # Adiciona um anotador específico para essa zona
+        self.zone_annotators.append(sv.PolygonZoneAnnotator(zone=zone))
+
     def check_fridge_interaction(self, detections: sv.Detections):
+        # Se não houver detecções, nem processa
+        if len(detections) == 0:
+            return False
+        
         for zone in self.fridge_zones:
             # O trigger retorna um array booleano para cada detecção
             is_inside = zone.trigger(detections=detections)
@@ -48,10 +55,7 @@ class MarketMonitor:
         annotated_frame = self.box_annotator.annotate(scene=frame.copy(), detections=detections)
         self.line_annotator.annotate(frame=annotated_frame, line_counter=self.line_zone)
 
-        for zone in self.fridge_zones:
-            annotated_frame = self.zone_annotator.annotate(
-                scene=annotated_frame, 
-                zone=zone
-            )
+        for annotator in self.zone_annotators:
+            annotated_frame = annotator.annotate(scene=annotated_frame)
         
-        return annotated_frame, crossed_in, crossed_out
+        return annotated_frame, crossed_in, crossed_out, detections

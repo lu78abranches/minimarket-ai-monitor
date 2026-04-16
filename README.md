@@ -66,7 +66,7 @@ Based on an inspection of the current project structure, here is what has been a
 - **Payment Conciliation Logic:** Link exit routines with a PoS validation mock.
 - **Reporting Dashboard:** Develop a frontend interface or dashboard to visualize stored interactions.
 
-## 📬 Contact & Developer
+### 📬 Contact & Developer
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lu78abranches)
 

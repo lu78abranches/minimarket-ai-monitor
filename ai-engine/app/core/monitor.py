@@ -45,10 +45,6 @@ class MarketMonitor:
         detections = detections[detections.class_id == 0] # Filtra pessoas
         detections = self.tracker.update_with_detections(detections)
 
-        # DEBUG: Veja se o tracker está funcionando
-        if len(detections) > 0:
-            print(f"Detectado: {len(detections)} pessoa(s) com IDs: {detections.tracker_id}")
-
         crossed_in, crossed_out = self.line_zone.trigger(detections)
         
         # Desenha na imagem

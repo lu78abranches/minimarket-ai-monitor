@@ -22,9 +22,11 @@ class MarketMonitor:
         # Cria um verificador de zona baseado no polígono enviado
         zone = sv.PolygonZone(polygon=polygon)
         self.fridge_zones.append(zone)
-
-        # Adiciona um anotador específico para essa zona
-        self.zone_annotators.append(sv.PolygonZoneAnnotator(zone=zone))
+        self.zone_names.append(name) # self.zone_names = [] no __init__
+    
+        # Cria o anotador para esta zona específica
+        annotator = sv.PolygonZoneAnnotator(zone=zone, thickness=2)
+        self.zone_annotators.append(annotator)
 
     def check_fridge_interaction(self, detections: sv.Detections):
         # Se não houver detecções, nem processa

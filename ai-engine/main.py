@@ -10,6 +10,19 @@ def run():
     monitor = MarketMonitor()
     event_service = EventService("http://localhost:8082/api/events")
 
+    zonas_monitoradas = {
+    "GELADEIRA_01": np.array([...]), # Geladeira 1
+    "GELADEIRA_02": np.array([...]), # Geladeira 2
+    "GELADEIRA_03": np.array([...]), # Geladeira 3
+    "GELADEIRA_04": np.array([...]), # Geladeira 4
+    "MOVEL_PRINCIPAL_2M": np.array([...]), # O gigante de 2m x 1.80m
+    "MOVEL_SECUNDARIO_A": np.array([...]), # O de 1.5m x 1.0m
+    "MOVEL_SECUNDARIO_B": np.array([...])  # O outro de 1.5m x 1.0m
+}
+
+for nome, area in zonas_monitoradas.items():
+    monitor.add_fridge_zone(area, nome)
+
     # Controle de frequência de envio (Cooldown)
     last_event_time = 0
     cooldown_seconds = 5  # Envia no máximo 1 evento a cada 5 segundos por tipo

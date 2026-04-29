@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.minimarket.backend_api.dto.EventoDTO;
+import com.minimarket.backend_api.dto.JornadaClienteDTO;
 import com.minimarket.backend_api.model.Evento;
 import com.minimarket.backend_api.repository.EventoRepository;
+import com.minimarket.backend_api.service.AuditoriaService;
 
 import jakarta.transaction.Transactional;
 
@@ -38,4 +40,17 @@ public class MonitoramentoController {
         // 3. Retornar 201 Created para o Python saber que deu certo
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @Autowired
+    private AuditoriaService auditoriaService;
+
+    @GetMapping("/report/{personId}")
+    public ResponseEntity<JornadaClienteDTO> obterRelatorio(@PathVariable String personId) {
+        JornadaClienteDTO relatorio = auditoriaService.gerarRelatorioCliente(personId);
+        if (relatorio == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(relatorio);
+    }
+
 }

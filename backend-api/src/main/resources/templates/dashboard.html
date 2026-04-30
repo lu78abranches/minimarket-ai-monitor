@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MiniMarket AI - Dashboard</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>🛒 Auditoria de Monitoramento</h1>
+            <span class="badge bg-primary">Tempo Real</span>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Cliente</th>
+                            <th>Permanência</th>
+                            <th>Locais Visitados</th>
+                            <th>Status de Auditoria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${relatorios}">
+                            <td th:text="${r.personId}">-</td>
+                            <td th:text="${r.tempoPermanencia}">-</td>
+                            <td>
+                                <span th:each="local : ${r.locaisVisitados}" class="badge bg-info text-dark me-1"
+                                    th:text="${local}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${r.statusAuditoria}"
+                                    th:classappend="${r.statusAuditoria.contains('SUSPEITO') ? 'text-danger fw-bold' : 'text-success'}">
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

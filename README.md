@@ -59,12 +59,12 @@ Based on an inspection of the current project structure, here is what has been a
 - **Python Script for Entry/Exit Detection (Virtual Line):** Virtual line crossings are already being detected in `ai-engine/main.py`.
 - **Python -> Spring Boot Integration via REST:** The AI-engine leverages `EventService` to post JSON payloads to the Spring Boot backend (`http://localhost:8082/api/events`), which receives them on `MonitoramentoController.java` and saves them to the repository.
 - **Interaction Zones Logic (Fridges):** Fridge zones have been mapped and trigger events (`FRIDGE_INTERACTION`) based on detections.
+- **Stay Duration Calculation:** Implemented in `AuditoriaService` to calculate exactly how long an individual has remained in the store.
+- **Payment Conciliation Logic:** Mock logic added in `AuditoriaService` to flag suspicious behavior (e.g., interacted with items and left without paying).
+- **Reporting Dashboard:** Created `DashboardController` and frontend interface to visualize stored interactions and customer journeys.
 
 ### 🚧 To Do
 - **Docker and Database Environment Setup:** Provide root `docker-compose.yml` to smoothly launch MySQL, Backend, and AI-Engine together.
-- **Stay Duration Calculation:** Calculate exactly how long an individual has remained in the store.
-- **Payment Conciliation Logic:** Link exit routines with a PoS validation mock.
-- **Reporting Dashboard:** Develop a frontend interface or dashboard to visualize stored interactions.
 
 ### 📬 Contact & Developer
 

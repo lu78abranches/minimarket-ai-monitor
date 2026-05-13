@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: minimarket-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: minimarket_db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./backend-api
+    container_name: minimarket-backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DB_URL=jdbc:mysql://db:3306/minimarket_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+    ports:
+      - "8082:8082"
+
+  ai-engine:
+    build: ./ai-engine
+    container_name: minimarket-ai-engine
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://backend:8082/api/events
+      - HEADLESS=True
+      # Se quiser rodar com um arquivo de vídeo em vez de webcam:
+      # - VIDEO_SOURCE=/app/data/video.mp4 
+    volumes:
+      - ./ai-engine:/app
+
+networks:
+  default:
+    name: minimarket-network
+
+volumes:
+  mysql_data:

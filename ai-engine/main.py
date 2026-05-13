@@ -1,43 +1,49 @@
 import cv2
 import numpy as np
 import supervision as sv
-import time  # <--- NOVO IMPORT
+import time
+import os
 from app.core.monitor import MarketMonitor
 from app.services.event_service import EventService
 
 def run():
-    cap = cv2.VideoCapture(0) 
+    backend_url = os.getenv("BACKEND_URL", "http://localhost:8082/api/events")
+    headless = os.getenv("HEADLESS", "False").lower() == "true"
+    video_source = os.getenv("VIDEO_SOURCE", "0")
+    
+    # Convert video_source to int if it's a digit (for webcam index)
+    if video_source.isdigit():
+        video_source = int(video_source)
+
+    cap = cv2.VideoCapture(video_source) 
     monitor = MarketMonitor()
-    event_service = EventService("http://localhost:8082/api/events")
+    event_service = EventService(backend_url)
 
     zonas_monitoradas = {
-    "GELADEIRA_01": np.array([...]), # Geladeira 1
-    "GELADEIRA_02": np.array([...]), # Geladeira 2
-    "GELADEIRA_03": np.array([...]), # Geladeira 3
-    "GELADEIRA_04": np.array([...]), # Geladeira 4
-    "MOVEL_PRINCIPAL_2M": np.array([...]), # O gigante de 2m x 1.80m
-    "MOVEL_SECUNDARIO_A": np.array([...]), # O de 1.5m x 1.0m
-    "MOVEL_SECUNDARIO_B": np.array([...])  # O outro de 1.5m x 1.0m
-}
+        # Zonas bem maiores para facilitar o teste (ocupando partes laterais da tela)
+        "GELADEIRA_ESQUERDA": np.array([[0, 100], [250, 100], [250, 500], [0, 500]]),
+        "GELADEIRA_DIREITA": np.array([[400, 100], [640, 100], [640, 500], [400, 500]])
+    }
 
-for nome, area in zonas_monitoradas.items():
-    monitor.add_fridge_zone(area, nome)
+    for nome, area in zonas_monitoradas.items():
+        monitor.add_fridge_zone(area, nome)
 
     # Controle de frequência de envio (Cooldown)
     last_event_time = 0
-    cooldown_seconds = 5  # Envia no máximo 1 evento a cada 5 segundos por tipo
+    cooldown_seconds = 3
 
-    fridge_area = np.array([
-        [100, 100], [500, 100], [500, 400], [100, 400]
-    ])
-    monitor.add_fridge_zone(fridge_area)
-
-    print("--- SISTEMA INICIADO ---")
+    print(f"--- SISTEMA INICIADO (Headless: {headless}) ---")
+    print(f"Conectado ao Backend em: {backend_url}")
     print("Aguardando detecção de pessoas...")
+
+    if not cap.isOpened():
+        print(f"ERRO: Não foi possível abrir a fonte de vídeo: {video_source}")
+        return
 
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
+            print("Fim do vídeo ou falha na captura.")
             break
 
         # Processa IA
@@ -46,38 +52,36 @@ for nome, area in zonas_monitoradas.items():
 
         # Lógica de Interação com a Geladeira
         if monitor.check_fridge_interaction(detections):
-            # Só tenta enviar se respeitar o tempo de cooldown
             if current_time - last_event_time > cooldown_seconds:
+                # Tentamos pegar o ID do rastreador, se não houver, enviamos como 'desconhecido'
+                p_id = "unknown"
                 if detections.tracker_id is not None and len(detections.tracker_id) > 0:
                     p_id = str(detections.tracker_id[0])
-                    print(f"!!! GATILHO ACIONADO !!! Enviando ID: {p_id}")
-                    
-                    # Envia ao Spring
-                    event_service.send_event(person_id=p_id, action="FRIDGE_INTERACTION")
-                    
-                    # Atualiza o cronômetro do último envio
-                    last_event_time = current_time 
-                else:
-                    print("Pessoa na zona, aguardando estabilização do ID...")
+                
+                print(f"!!! INTERAÇÃO DETECTADA !!! Enviando evento para ID: {p_id}")
+                event_service.send_event(person_id=p_id, action="FRIDGE_INTERACTION")
+                last_event_time = current_time 
 
-        # Lógica de Entrada (Linha Virtual) - Também com cooldown simples
         if any(entered):
             print(">>> Evento: ENTRADA DETECTADA")
             event_service.send_event(person_id="unknown", action="ENTER")
         
-        # Lógica de Saída (Linha Virtual)
         if any(exited):
             print("<<< Evento: SAÍDA DETECTADA")
             event_service.send_event(person_id="unknown", action="EXIT")
 
-        # Exibe o vídeo
-        cv2.imshow("Minimercado AI - Monitoramento", annotated_frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # Exibe o vídeo (Apenas se não for headless)
+        if not headless:
+            cv2.imshow("Minimercado AI - Monitoramento", annotated_frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
+            # Em modo headless, podemos apenas logar que o processamento está ocorrendo
+            pass
 
     cap.release()
-    cv2.destroyAllWindows()
+    if not headless:
+        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     run()

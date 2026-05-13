@@ -7,6 +7,7 @@ class MarketMonitor:
         self.model = YOLO(model_path)
         self.tracker = sv.ByteTrack()
         self.fridge_zones = []
+        self.zone_names = []
         
         # Definindo a linha (Ex: Horizontal no meio da tela 640x480)
         self.line_start = sv.Point(0, 300)  # Ponto inicial da esquerda
@@ -18,11 +19,11 @@ class MarketMonitor:
         self.line_annotator = sv.LineZoneAnnotator()
         self.zone_annotators = [] # Vamos criar uma lista de anotadores
     
-    def add_fridge_zone(self, polygon: np.ndarray):
+    def add_fridge_zone(self, polygon: np.ndarray, name: str = "Unknown"):
         # Cria um verificador de zona baseado no polígono enviado
         zone = sv.PolygonZone(polygon=polygon)
         self.fridge_zones.append(zone)
-        self.zone_names.append(name) # self.zone_names = [] no __init__
+        self.zone_names.append(name)
     
         # Cria o anotador para esta zona específica
         annotator = sv.PolygonZoneAnnotator(zone=zone, thickness=2)
@@ -45,6 +46,10 @@ class MarketMonitor:
         detections = sv.Detections.from_ultralytics(results)
     
         detections = detections[detections.class_id == 0] # Filtra pessoas
+        
+        if len(detections) > 0:
+            print(f"[DEBUG] {len(detections)} pessoas detectadas no frame.")
+            
         detections = self.tracker.update_with_detections(detections)
 
         crossed_in, crossed_out = self.line_zone.trigger(detections)

@@ -41,13 +41,19 @@ Make sure you have Docker and Nvidia Container Toolkit (if using GPU) installed.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/minimarket-ai-monitor.git
+git clone https://github.com/lu78abranches/minimarket-ai-monitor.git
 cd minimarket-ai-monitor
 
-# Start the services (Docker integration in progress)
+# Start the services (Database and Backend)
 docker-compose up --build
+
+# Run the AI Engine locally (to access webcam)
+cd ai-engine
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
 ```
-*(Note: Complete Docker configuration is pending)*
 
 ---
 
@@ -62,9 +68,12 @@ Based on an inspection of the current project structure, here is what has been a
 - **Stay Duration Calculation:** Implemented in `AuditoriaService` to calculate exactly how long an individual has remained in the store.
 - **Payment Conciliation Logic:** Mock logic added in `AuditoriaService` to flag suspicious behavior (e.g., interacted with items and left without paying).
 - **Reporting Dashboard:** Created `DashboardController` and frontend interface to visualize stored interactions and customer journeys.
+- **Docker and Database Environment Setup:** Full containerization with `docker-compose.yml` for MySQL 8.0, Spring Boot Backend, and Python AI-Engine (Headless).
 
 ### 🚧 To Do
-- **Docker and Database Environment Setup:** Provide root `docker-compose.yml` to smoothly launch MySQL, Backend, and AI-Engine together.
+- **Real-time RTSP/NVR Integration:** Connect the AI-Engine to real IP cameras instead of local webcams.
+- **Multi-Camera Sync:** Correlate IDs across multiple cameras for a seamless customer journey.
+- **Production-Ready Security:** Implement OAuth2/JWT for API security and production database credentials.
 
 ### 📬 Contact & Developer
 

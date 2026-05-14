@@ -21,21 +21,23 @@ Minimarket AI Monitor is an intelligent computer vision system designed to track
 
 ## 🛠 Monorepo Architecture
 
-/minimarket-ai-monitor
-├── /ai-engine            # Python Computer Vision Service (YOLOv8 + Supervision)
-│   ├── /app/core         # AI Engine (monitor.py)
-│   ├── /app/services     # HTTP Client (event_service.py)
-│   └── get_coordinates.py# Spatial calibration utility tool
-├── /backend-api          # REST API and Orchestrator (Spring Boot 3.x + Java 17)
-└── docker-compose.yml    # Local infrastructure orchestrator
+```text
+minimarket-ai-monitor/
+├── 🐍 ai-engine            # Python Computer Vision Service (YOLOv8 + Supervision)
+│   ├── 📁 app/core         # AI Engine core logic (monitor.py)
+│   ├── 📁 app/services     # HTTP Client for event reporting
+│   └── 🛠 get_coordinates.py# Spatial calibration utility
+├── ☕ backend-api          # REST API & Orchestrator (Spring Boot 3.x + Java 17)
+└── 🐳 docker-compose.yml    # Infrastructure orchestrator
+```
 
-## 🛠 Technology Stack
+## 🚀 Technology Stack
 
 | Layer | Technology | Function |
 | :--- | :--- | :--- |
-| **Computer Vision** | Python + OpenCV | Frame capture and manipulation (RTSP/Webcam). |
-| **AI Model** | YOLOv8 (Ultralytics) | Person and object detection (classes: person, hand, bag). |
-| **Tracking** | ByteTrack / Supervision | Persistent tracking and counting lines/zones. |
+| **👁 Computer Vision** | `Python` + `OpenCV` | Frame capture and manipulation. |
+| **🧠 AI Model** | `YOLOv8` (Ultralytics) | Object detection (person, hand, products). |
+| **📍 Tracking** | `ByteTrack` + `Supervision` | Persistent tracking and zone/line logic. |
 | **Backend** | Spring Boot (Java 17) | Event orchestration, business rules, and APIs. |
 | **Database** | MySQL | Persistence of logs, users, and transactions. |
 | **Infrastructure** | Docker & Docker Compose | Containerization of all services. |

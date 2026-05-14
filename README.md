@@ -18,6 +18,17 @@ Minimarket AI Monitor is an intelligent computer vision system designed to track
 - **NFR03 - Scalability:** The architecture must support the addition of up to 3 simultaneous cameras in the same 4m² environment.
 - **NFR04 - Isolation:** The system must run in containers to facilitate deployment.
 
+
+## 🛠 Monorepo Architecture
+
+/minimarket-ai-monitor
+├── /ai-engine            # Python Computer Vision Service (YOLOv8 + Supervision)
+│   ├── /app/core         # AI Engine (monitor.py)
+│   ├── /app/services     # HTTP Client (event_service.py)
+│   └── get_coordinates.py# Spatial calibration utility tool
+├── /backend-api          # REST API and Orchestrator (Spring Boot 3.x + Java 17)
+└── docker-compose.yml    # Local infrastructure orchestrator
+
 ## 🛠 Technology Stack
 
 | Layer | Technology | Function |

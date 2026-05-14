@@ -23,12 +23,12 @@ Minimarket AI Monitor is an intelligent computer vision system designed to track
 
 ```text
 minimarket-ai-monitor/
-├── 🐍 ai-engine            # Python Computer Vision Service (YOLOv8 + Supervision)
-│   ├── 📁 app/core         # AI Engine core logic (monitor.py)
-│   ├── 📁 app/services     # HTTP Client for event reporting
-│   └── 🛠 get_coordinates.py# Spatial calibration utility
-├── ☕ backend-api          # REST API & Orchestrator (Spring Boot 3.x + Java 17)
-└── 🐳 docker-compose.yml    # Infrastructure orchestrator
+├── 🐍 ai-engine                # Python Computer Vision Service (YOLOv8 + Supervision)
+│   ├── 📁 app/core             # AI Engine core logic (monitor.py)
+│   ├── 📁 app/services         # HTTP Client for event reporting
+│   └── 🛠 get_coordinates.py    # Spatial calibration utility
+├── ☕ backend-api              # REST API & Orchestrator (Spring Boot 3.x + Java 17)
+└── 🐳 docker-compose.yml       # Infrastructure orchestrator
 ```
 
 ## 🚀 Technology Stack

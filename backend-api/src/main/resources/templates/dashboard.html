@@ -166,11 +166,38 @@
                 <div class="col-md-4">
                     <select id="statusFilter" class="form-select">
                         <option value="">Todos</option>
-                        <option value="SUSPEITO">Suspeito</option>
+                        <option value="ALERTA">Suspeito</option>
                         <option value="OK">Normal</option>
                     </select>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- SELEÇÃO DE CENÁRIOS PARA O RECRUTADOR (INTEGRADO) -->
+        <div class="card shadow-sm mb-4 p-4 bg-dark text-white">
+            <h3 class="h5 mb-2">🎭 Painel Interativo para Recrutadores</h3>
+            <p class="small text-muted mb-3">Escolha um cenário para simular o comportamento de um cliente, carregar o
+                vídeo da IA e processar a auditoria em tempo real.</p>
+            <div class="d-flex gap-2 flex-wrap">
+                <button onclick="dispararCenario('Cenario_Normal', 2)" class="btn btn-outline-success btn-sm">🟢 Cliente
+                    Normal (Paga Tudo)</button>
+                <button onclick="dispararCenario('Cenario_Visita', 0)" class="btn btn-outline-info btn-sm">🔵 Apenas
+                    Olhou (Não pegou nada)</button>
+                <button onclick="dispararCenario('Cenario_Furto_Total', 0)" class="btn btn-outline-danger btn-sm">❌
+                    Furto Total (Não pagou nada)</button>
+                <button onclick="dispararCenario('Cenario_Furto_Parcial', 1)" class="btn btn-outline-warning btn-sm">⚠️
+                    Furto Parcial (Pagou apenas 1)</button>
+            </div>
+        </div>
+
+        <!-- PLAYER DE VÍDEO DA SIMULAÇÃO (INTEGRADO) -->
+        <div class="card shadow-sm mb-4 p-3 text-center" id="videoContainer" style="display:none;">
+            <h4 id="videoTitle" class="h6 text-primary mb-3 fw-bold"></h4>
+            <div class="mx-auto" style="max-width: 600px;">
+                <video id="simuladorVideo" width="100%" controls class="rounded border">
+                    <source id="videoSource" src="" type="video/mp4">
+                </video>
             </div>
         </div>
 
@@ -205,7 +232,7 @@
 
                                 <td>
                                     <span th:text="${r.statusAuditoria}"
-                                        th:classappend="${r.statusAuditoria.contains('SUSPEITO') ? 'status-alerta' : 'status-ok'}">
+                                        th:classappend="${r.statusAuditoria.contains('ALERTA') ? 'status-alerta' : 'status-ok'}">
                                     </span>
                                 </td>
 
@@ -274,6 +301,69 @@
                 }
             }
         });
+
+        // LÓGICA DE SIMULAÇÃO DOS CENÁRIOS (INTEGRADO)
+        function dispararCenario(tipo, itensPagos) {
+            const randomId = "REC_" + Math.floor(Math.random() * 1000);
+
+            // 1. Exibe e atualiza o player de vídeo na tela
+            document.getElementById("videoContainer").style.display = "block";
+            document.getElementById("videoTitle").innerText = "🎬 Assistindo: " + tipo.replace(/_/g, ' ');
+
+            // Substitua estas URLs pelos links dos seus vídeos gerados por IA hospedados na internet
+            const videoMap = {
+                'Cenario_Normal': 'seu-servidor.com',
+                'Cenario_Visita': 'seu-servidor.com',
+                'Cenario_Furto_Total': 'seu-servidor.com',
+                'Cenario_Furto_Parcial': 'seu-servidor.com'
+            };
+
+            const videoElement = document.getElementById("simuladorVideo");
+            document.getElementById("videoSource").src = videoMap[tipo];
+            videoElement.load();
+            videoElement.play();
+
+            // 2. Dispara a sequência cronológica de eventos para a API REST do Spring
+            enviarSequenciaEventos(randomId, tipo, itensPagos);
+        }
+
+        async function enviarSequenciaEventos(id, cenario, itensPagos) {
+            // Evento 1: Cliente entra na loja
+            await enviarPost(id, 'ENTER', 'PORTA_ENTRADA', 0);
+
+            // Eventos 2: IA detecta manuseio ou retirada baseado no cenário
+            if (cenario === 'Cenario_Normal') {
+                await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_BEBIDAS', 0);
+                await enviarPost(id, 'PRODUCT_TAKEN', 'MOVEL_PRINCIPAL_2M', 0);
+            }
+            else if (cenario === 'Cenario_Visita') {
+                await enviarPost(id, 'FRIDGE_INTERACTION', 'GELADEIRA_BEBIDAS', 0);
+                await enviarPost(id, 'FRIDGE_INTERACTION', 'MOVEL_PRINCIPAL_2M', 0);
+            }
+            else if (cenario === 'Cenario_Furto_Total') {
+                await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_BEBIDAS', 0);
+                await enviarPost(id, 'PRODUCT_TAKEN', 'PRATELEIRA_DOCES', 0);
+            }
+            else if (cenario === 'Cenario_Furto_Parcial') {
+                await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_BEBIDAS', 0);
+                await enviarPost(id, 'PRODUCT_TAKEN', 'PRATELEIRA_DOCES', 0);
+                await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_LATICINIOS', 0);
+            }
+
+            // Evento 3: Cliente sai e o caixa (PDV) informa quantos itens foram pagos
+            await enviarPost(id, 'EXIT', 'PORTA_SAIDA', itensPagos);
+
+            // Recarrega a tela após 2.5 segundos para atualizar a tabela com o novo registro
+            setTimeout(() => { location.reload(); }, 2500);
+        }
+
+        function enviarPost(id, acao, local, pagos) {
+            return fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ personId: id, action: acao, location: local, itensPagos: pagos })
+            });
+        }
     </script>
 
 </body>

@@ -18,4 +18,5 @@ public class Evento {
     private String action;
     private String location;
     private LocalDateTime timestamp = LocalDateTime.now();
+    private Integer itensPagos;
 }

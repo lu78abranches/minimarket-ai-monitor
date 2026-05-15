@@ -273,15 +273,6 @@
         // Gráfico
         const ctx = document.getElementById('statusChart');
 
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Normal', 'Suspeito'],
-                datasets: [{
-                    data: [70, 30], // pode dinamizar depois
-                }]
-            }
-        });
 
         new Chart(ctx, {
             type: 'doughnut',
@@ -364,6 +355,32 @@
                 body: JSON.stringify({ personId: id, action: acao, location: local, itensPagos: pagos })
             });
         }
+
+        // LÓGICA DE SIMULAÇÃO DOS CENÁRIOS (INTEGRADO)
+        function dispararCenario(tipo, itensPagos) {
+            const randomId = "REC_" + Math.floor(Math.random() * 1000);
+
+            // 1. Exibe e atualiza o player de vídeo na tela
+            document.getElementById("videoContainer").style.display = "block";
+            document.getElementById("videoTitle").innerText = "🎬 Assistindo: " + tipo.replace(/_/g, ' ');
+
+            // CAMINHOS ATUALIZADOS PARA OS SEUS VÍDEOS LOCAIS
+            const videoMap = {
+                'Cenario_Normal': '/videos/normal.mp4',
+                'Cenario_Visita': '/videos/visita.mp4',
+                'Cenario_Furto_Total': '/videos/furto_total.mp4',
+                'Cenario_Furto_Parcial': '/videos/furto_parcial.mp4'
+            };
+
+            const videoElement = document.getElementById("simuladorVideo");
+            document.getElementById("videoSource").src = videoMap[tipo];
+            videoElement.load();
+            videoElement.play();
+
+            // 2. Dispara a sequência cronológica de eventos para a API REST do Spring
+            enviarSequenciaEventos(randomId, tipo, itensPagos);
+        }
+
     </script>
 
 </body>

@@ -194,7 +194,7 @@
         <!-- PLAYER DE VÍDEO DA SIMULAÇÃO (INTEGRADO) -->
         <div class="card shadow-sm mb-4 p-3 text-center" id="videoContainer" style="display:none;">
             <h4 id="videoTitle" class="h6 text-primary mb-3 fw-bold"></h4>
-            <div class="mx-auto" style="max-width: 600px;">
+            <div class="mx-auto" id="videoWrapper" style="max-width: 600px;">
                 <!-- Localize a tag <video> e atualize para aceitar múltiplos codecs -->
                 <video id="simuladorVideo" width="100%" controls class="rounded border">
                     <source id="videoSource" src="" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
@@ -484,6 +484,15 @@
             };
 
             const videoElement = document.getElementById("simuladorVideo");
+            const videoWrapper = document.getElementById("videoWrapper");
+
+            // Ajusta o tamanho se for vertical (9:16)
+            if (tipo === 'Cenario_Furto_Parcial') {
+                videoWrapper.style.maxWidth = "280px";
+            } else {
+                videoWrapper.style.maxWidth = "600px";
+            }
+
             document.getElementById("videoSource").src = videoMap[tipo];
             videoElement.load();
             videoElement.play();

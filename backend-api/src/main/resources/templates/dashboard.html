@@ -88,6 +88,33 @@
             margin: 0 auto;
             /* centraliza */
         }
+
+        .btn-simulation {
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-simulation:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            filter: brightness(1.1);
+        }
+
+        .btn-simulation:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -174,20 +201,45 @@
             </div>
         </div>
 
-        <!-- SELEÇÃO DE CENÁRIOS PARA O RECRUTADOR (INTEGRADO) -->
-        <div class="card shadow-sm mb-4 p-4 bg-dark text-white">
-            <h3 class="h5 mb-2">🎭 Painel Interativo Clique na Situação desejada para Simular o Vídeo </h3>
-            <p class="small text-muted mb-3">Escolha um cenário para simular o comportamento de um cliente, carregar o
-                vídeo da IA e processar a auditoria em tempo real.</p>
-            <div class="d-flex gap-2 flex-wrap">
-                <button onclick="dispararCenario('Cenario_Normal', 2)" class="btn btn-outline-success btn-sm">🟢 Cliente
-                    Normal (Paga Tudo)</button>
-                <button onclick="dispararCenario('Cenario_Visita', 0)" class="btn btn-outline-info btn-sm">🔵 Apenas
-                    Olhou (Não pegou nada)</button>
-                <button onclick="dispararCenario('Cenario_Furto_Total', 0)" class="btn btn-outline-danger btn-sm">❌
-                    Furto Total (Não pagou nada)</button>
-                <button onclick="dispararCenario('Cenario_Furto_Parcial', 1)" class="btn btn-outline-warning btn-sm">⚠️
-                    Furto Parcial (Pagou apenas 1)</button>
+        <!-- PAINEL DE SIMULAÇÃO INTERATIVO -->
+        <div class="card shadow-sm mb-4 border-0 overflow-hidden" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border-radius: 16px;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                        <span class="fs-4">🎥</span>
+                    </div>
+                    <div>
+                        <h3 class="h5 mb-0 fw-bold">Simular Cenários de IA</h3>
+                        <p class="small text-light opacity-75 mb-0">Escolha uma situação abaixo para ver a detecção em tempo real.</p>
+                    </div>
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <button onclick="dispararCenario('Cenario_Normal', 2)" class="btn btn-simulation btn-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <span class="fs-3 mb-2">🟢</span>
+                            <span class="small fw-bold">Compra Normal</span>
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <button onclick="dispararCenario('Cenario_Visita', 0)" class="btn btn-simulation btn-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-white">
+                            <span class="fs-3 mb-2">🔵</span>
+                            <span class="small fw-bold">Apenas Visita</span>
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <button onclick="dispararCenario('Cenario_Furto_Total', 0)" class="btn btn-simulation btn-danger w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <span class="fs-3 mb-2">❌</span>
+                            <span class="small fw-bold">Furto Total</span>
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <button onclick="dispararCenario('Cenario_Furto_Parcial', 1)" class="btn btn-simulation btn-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 text-dark">
+                            <span class="fs-3 mb-2">⚠️</span>
+                            <span class="small fw-bold">Furto Parcial</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 

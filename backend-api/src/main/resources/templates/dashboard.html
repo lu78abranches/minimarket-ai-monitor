@@ -272,33 +272,123 @@
         searchInput.addEventListener("keyup", filtrar);
         statusFilter.addEventListener("change", filtrar);
 
-        // Gráfico
+        // Configuração do Gráfico (Global para fácil atualização)
         const ctx = document.getElementById('statusChart');
+        let statusChart;
 
+        function atualizarGrafico() {
+            const rows = document.querySelectorAll("#tabela tbody tr");
+            let normalCount = 0;
+            let suspeitoCount = 0;
 
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Normal', 'Suspeito'],
-                datasets: [{
-                    data: [70, 30],
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // permite respeitar o CSS
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    }
+            rows.forEach(row => {
+                const statusText = row.querySelector("td:last-child").innerText.toUpperCase();
+                if (statusText.includes("ALERTA") || statusText.includes("SUSPEITO")) {
+                    suspeitoCount++;
+                } else {
+                    normalCount++;
                 }
+            });
+
+            const data = [normalCount, suspeitoCount];
+
+            if (statusChart) {
+                statusChart.data.datasets[0].data = data;
+                statusChart.update();
+            } else {
+                statusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Normal', 'Suspeito'],
+                        datasets: [{
+                            data: data,
+                            backgroundColor: ['#3b82f6', '#ef4444'], // Azul e Vermelho
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        cutout: '70%'
+                    }
+                });
             }
-        });
+
+            // Atualiza KPIs (Opcional, mas melhora o visual)
+            document.querySelector(".kpi").innerText = rows.length;
+            document.querySelectorAll(".kpi")[1].innerText = suspeitoCount;
+        }
+
+        // Inicializa o gráfico no carregamento
+        window.addEventListener('DOMContentLoaded', atualizarGrafico);
+
+        // DADOS FICTÍCIOS PARA SIMULAÇÃO (RECRUTADOR)
+        const CENARIOS_FAKE = {
+            'Cenario_Normal': {
+                permanencia: '2 min 15 seg',
+                locais: ['ENTRADA', 'GELADEIRA', 'CAIXA', 'SAIDA'],
+                status: 'OK',
+                classe: 'status-ok'
+            },
+            'Cenario_Visita': {
+                permanencia: '0 min 45 seg',
+                locais: ['ENTRADA', 'MOVEL_PRINCIPAL', 'SAIDA'],
+                status: 'OK (Apenas Olhou)',
+                classe: 'status-ok'
+            },
+            'Cenario_Furto_Total': {
+                permanencia: '1 min 30 seg',
+                locais: ['ENTRADA', 'GELADEIRA', 'SAIDA'],
+                status: 'ALERTA: Furto Total',
+                classe: 'status-alerta'
+            },
+            'Cenario_Furto_Parcial': {
+                permanencia: '3 min 10 seg',
+                locais: ['ENTRADA', 'GELADEIRA', 'PRATELEIRA', 'SAIDA'],
+                status: 'ALERTA: Furto Parcial',
+                classe: 'status-alerta'
+            }
+        };
+
+        function adicionarLinhaSimulada(id, tipo) {
+            const dados = CENARIOS_FAKE[tipo];
+            const tbody = document.querySelector("#tabela tbody");
+            const newRow = document.createElement("tr");
+
+            let locaisHtml = dados.locais.map(l => `<span class="badge badge-soft me-1">${l}</span>`).join('');
+
+            newRow.innerHTML = `
+                <td>${id}</td>
+                <td>${dados.permanencia}</td>
+                <td>${locaisHtml}</td>
+                <td><span class="${dados.classe}">${dados.status}</span></td>
+            `;
+
+            // Insere no topo com destaque
+            tbody.insertBefore(newRow, tbody.firstChild);
+            
+            // Pequeno efeito visual
+            newRow.style.backgroundColor = "#fff9c4";
+            setTimeout(() => { newRow.style.backgroundColor = "transparent"; }, 2000);
+
+            // Atualiza o gráfico após adicionar
+            atualizarGrafico();
+        }
 
         // LÓGICA DE SIMULAÇÃO DOS CENÁRIOS (INTEGRADO)
         // A função dispararCenario foi consolidada abaixo.
 
+        let cenarioAtual = null;
+        let idAtual = null;
+
         async function enviarSequenciaEventos(id, cenario, itensPagos) {
+            cenarioAtual = cenario;
+            idAtual = id;
+
+            /* LOGICA ORIGINAL COMENTADA (PARA USO FUTURO)
             // Evento 1: Cliente entra na loja
             await enviarPost(id, 'ENTER', 'PORTA_ENTRADA', 0);
 
@@ -323,23 +413,30 @@
 
             // Evento 3: Cliente sai e o caixa (PDV) informa quantos itens foram pagos
             await enviarPost(id, 'EXIT', 'PORTA_SAIDA', itensPagos);
+            */
+
+            console.log("Simulando sequência de eventos para:", cenario);
 
             // --- CORREÇÃO DO TIMEOUT ---
-            // Em vez de recarregar sumariamente, adicionamos um listener ao player de vídeo.
-            // A página só vai atualizar e inserir a linha na tabela QUANDO O VÍDEO TERMINAR DE PASSAR.
             const videoElement = document.getElementById("simuladorVideo");
             videoElement.onended = function () {
-                console.log("Vídeo finalizado. Atualizando tabela...");
-                location.reload();
+                console.log("Vídeo finalizado. Adicionando dados fictícios...");
+                // Em vez de recarregar, adicionamos a linha simulada
+                adicionarLinhaSimulada(idAtual, cenarioAtual);
+                
+                // location.reload(); // Comentado conforme pedido
             };
         }
 
         function enviarPost(id, acao, local, pagos) {
+            /* 
             return fetch('/api/events', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ personId: id, action: acao, location: local, itensPagos: pagos })
             });
+            */
+            console.log("Mock POST:", {id, acao, local, pagos});
         }
 
         // LÓGICA DE SIMULAÇÃO DOS CENÁRIOS (INTEGRADO)

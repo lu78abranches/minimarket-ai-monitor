@@ -8,6 +8,12 @@ Minimarket AI Monitor is an intelligent computer vision system designed to track
 >
 > ⚠️ **Nota Técnica sobre a Hospedagem (Plano Gratuito):** A aplicação está hospedada na infraestrutura gratuita do Render. Se o sistema estiver inativo por alguns minutos, o servidor entrará em modo de hibernação (*cold start*). O primeiro carregamento pode levar cerca de **45 a 60 segundos** para inicializar o contêiner Docker e conectar ao PostgreSQL. Os acessos seguintes serão instantâneos.
 
+🔗 Production Demo
+
+🌐 Access the Interactive Dashboard: MiniMarket AI Dashboard
+
+⚠️ Technical Note About Hosting (Free Plan): The application is hosted on Render’s free-tier infrastructure. If the system remains inactive for a few minutes, the server will enter hibernation mode (cold start). The first load may take around 45 to 60 seconds to initialize the Docker container and connect to PostgreSQL. Subsequent accesses will be instantaneous.
+
 
 ## 📋 System Requirements
 

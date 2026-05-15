@@ -6,5 +6,6 @@ public record JornadaClienteDTO(
         String personId,
         String tempoPermanencia,
         List<String> locaisVisitados,
-        String statusAuditoria) {
+        String statusAuditoria,
+        String horario) {
 }

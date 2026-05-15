@@ -2,6 +2,13 @@
 
 Minimarket AI Monitor is an intelligent computer vision system designed to track customers, monitor interactions with shelves and fridges, and generate behavior logs. It integrates a computer vision pipeline with a backend management server to record events for future conciliation with Point-of-Sale (POS) data.
 
+## 🔗 Demonstração em Produção
+
+> 🌐 **Acesse o Dashboard Interativo:** [MiniMarket AI Dashboard](https://minimarket-ai-monitor.onrender.com/dashboard)
+>
+> ⚠️ **Nota Técnica sobre a Hospedagem (Plano Gratuito):** A aplicação está hospedada na infraestrutura gratuita do Render. Se o sistema estiver inativo por alguns minutos, o servidor entrará em modo de hibernação (*cold start*). O primeiro carregamento pode levar cerca de **45 a 60 segundos** para inicializar o contêiner Docker e conectar ao PostgreSQL. Os acessos seguintes serão instantâneos.
+
+
 ## 📋 System Requirements
 
 ### 1. Functional Requirements (FR)

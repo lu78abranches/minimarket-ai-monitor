@@ -213,6 +213,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Horário</th>
                                 <th>Permanência</th>
                                 <th>Locais</th>
                                 <th>Status</th>
@@ -220,9 +221,11 @@
                         </thead>
 
                         <tbody>
-                            <tr th:each="r : ${relatorios}">
+                             <tr th:each="r : ${relatorios}">
 
                                 <td th:text="${r.personId}"></td>
+
+                                <td th:text="${r.horario}" class="text-muted small"></td>
 
                                 <td th:text="${r.tempoPermanencia}"></td>
 
@@ -357,23 +360,48 @@
             const dados = CENARIOS_FAKE[tipo];
             const tbody = document.querySelector("#tabela tbody");
             const newRow = document.createElement("tr");
+            
+            // Adiciona classe para diferenciar cor (Simulação)
+            newRow.classList.add("table-primary"); // Destaque azul claro do Bootstrap
+
+            // Lógica de Data/Hora Realista
+            const agora = new Date();
+            let dataSimulada = new Date(agora);
+
+            if (tipo === 'Cenario_Normal') {
+                // 4 horas atrás
+                dataSimulada.setHours(agora.getHours() - 4);
+            } else if (tipo === 'Cenario_Visita') {
+                // 1 dia atrás
+                dataSimulada.setDate(agora.getDate() - 1);
+            } else if (tipo === 'Cenario_Furto_Total') {
+                // 2 horas atrás
+                dataSimulada.setHours(agora.getHours() - 2);
+            } else {
+                // 30 min atrás
+                dataSimulada.setMinutes(agora.getMinutes() - 30);
+            }
+
+            const formatar = (d) => {
+                const pad = (n) => n.toString().padStart(2, '0');
+                return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            };
+
+            const horarioFormatado = formatar(dataSimulada);
 
             let locaisHtml = dados.locais.map(l => `<span class="badge badge-soft me-1">${l}</span>`).join('');
 
             newRow.innerHTML = `
-                <td>${id}</td>
+                <td class="fw-bold">${id}</td>
+                <td class="text-muted small">${horarioFormatado}</td>
                 <td>${dados.permanencia}</td>
                 <td>${locaisHtml}</td>
                 <td><span class="${dados.classe}">${dados.status}</span></td>
             `;
 
-            // Insere no topo com destaque
+            // Insere no topo
             tbody.insertBefore(newRow, tbody.firstChild);
             
-            // Pequeno efeito visual
-            newRow.style.backgroundColor = "#fff9c4";
-            setTimeout(() => { newRow.style.backgroundColor = "transparent"; }, 2000);
-
             // Atualiza o gráfico após adicionar
             atualizarGrafico();
         }

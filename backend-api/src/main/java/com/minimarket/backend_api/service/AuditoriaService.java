@@ -31,10 +31,11 @@ public class AuditoriaService {
                 .distinct()
                 .collect(Collectors.toList());
 
-        // Regra do coração: pegou algo e não pagou?
-        String status = determinarStatus(eventos);
+        // Horário de entrada (primeiro evento)
+        var primeiroEvento = eventos.get(0).getTimestamp();
+        String horario = primeiroEvento.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
-        return new JornadaClienteDTO(personId, permanencia, locais, status);
+        return new JornadaClienteDTO(personId, permanencia, locais, status, horario);
     }
 
     private String calcularTempo(List<Evento> eventos) {

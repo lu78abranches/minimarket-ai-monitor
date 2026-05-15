@@ -344,8 +344,14 @@
             // Evento 3: Cliente sai e o caixa (PDV) informa quantos itens foram pagos
             await enviarPost(id, 'EXIT', 'PORTA_SAIDA', itensPagos);
 
-            // Recarrega a tela após 2.5 segundos para atualizar a tabela com o novo registro
-            setTimeout(() => { location.reload(); }, 2500);
+            // --- CORREÇÃO DO TIMEOUT ---
+            // Em vez de recarregar sumariamente, adicionamos um listener ao player de vídeo.
+            // A página só vai atualizar e inserir a linha na tabela QUANDO O VÍDEO TERMINAR DE PASSAR.
+            const videoElement = document.getElementById("simuladorVideo");
+            videoElement.onended = function () {
+                console.log("Vídeo finalizado. Atualizando tabela...");
+                location.reload();
+            };
         }
 
         function enviarPost(id, acao, local, pagos) {

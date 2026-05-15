@@ -176,7 +176,7 @@
 
         <!-- SELEÇÃO DE CENÁRIOS PARA O RECRUTADOR (INTEGRADO) -->
         <div class="card shadow-sm mb-4 p-4 bg-dark text-white">
-            <h3 class="h5 mb-2">🎭 Painel Interativo para Recrutadores</h3>
+            <h3 class="h5 mb-2">🎭 Painel Interativo Clique na Situação desejada para Simular o Vídeo </h3>
             <p class="small text-muted mb-3">Escolha um cenário para simular o comportamento de um cliente, carregar o
                 vídeo da IA e processar a auditoria em tempo real.</p>
             <div class="d-flex gap-2 flex-wrap">
@@ -195,9 +195,11 @@
         <div class="card shadow-sm mb-4 p-3 text-center" id="videoContainer" style="display:none;">
             <h4 id="videoTitle" class="h6 text-primary mb-3 fw-bold"></h4>
             <div class="mx-auto" style="max-width: 600px;">
+                <!-- Localize a tag <video> e atualize para aceitar múltiplos codecs -->
                 <video id="simuladorVideo" width="100%" controls class="rounded border">
-                    <source id="videoSource" src="" type="video/mp4">
+                    <source id="videoSource" src="" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
                 </video>
+
             </div>
         </div>
 

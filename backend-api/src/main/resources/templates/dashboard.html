@@ -296,29 +296,7 @@
         });
 
         // LÓGICA DE SIMULAÇÃO DOS CENÁRIOS (INTEGRADO)
-        function dispararCenario(tipo, itensPagos) {
-            const randomId = "REC_" + Math.floor(Math.random() * 1000);
-
-            // 1. Exibe e atualiza o player de vídeo na tela
-            document.getElementById("videoContainer").style.display = "block";
-            document.getElementById("videoTitle").innerText = "🎬 Assistindo: " + tipo.replace(/_/g, ' ');
-
-            // Substitua estas URLs pelos links dos seus vídeos gerados por IA hospedados na internet
-            const videoMap = {
-                'Cenario_Normal': 'seu-servidor.com',
-                'Cenario_Visita': 'seu-servidor.com',
-                'Cenario_Furto_Total': 'seu-servidor.com',
-                'Cenario_Furto_Parcial': 'seu-servidor.com'
-            };
-
-            const videoElement = document.getElementById("simuladorVideo");
-            document.getElementById("videoSource").src = videoMap[tipo];
-            videoElement.load();
-            videoElement.play();
-
-            // 2. Dispara a sequência cronológica de eventos para a API REST do Spring
-            enviarSequenciaEventos(randomId, tipo, itensPagos);
-        }
+        // A função dispararCenario foi consolidada abaixo.
 
         async function enviarSequenciaEventos(id, cenario, itensPagos) {
             // Evento 1: Cliente entra na loja

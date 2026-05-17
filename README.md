@@ -51,14 +51,14 @@ minimarket-ai-monitor/
 | **🧠 AI Model** | `YOLOv8` (Ultralytics) | Object detection (person, hand, products). |
 | **📍 Tracking** | `ByteTrack` + `Supervision` | Persistent tracking and zone/line logic. |
 | **Backend** | Spring Boot (Java 17) | Event orchestration, business rules, and APIs. |
-| **Database** | MySQL | Persistence of logs, users, and transactions. |
+| **Database** | PostgreSQL & MySQL | Persistence of logs, users, and transactions. |
 | **Infrastructure** | Docker & Docker Compose | Containerization of all services. |
 
 ## 📐 Proposed Architecture
 
 1. **AI-Engine (Python):** Processes the video stream -> Detects movement -> Sends events (JSON) via POST to the Backend.
 2. **API Gateway (Spring Boot):** Receives events -> Validates business rules -> Saves to the Database.
-3. **Database (MySQL):** Stores the history for future auditing.
+3. **Database (PostgreSQL/MySQL):** Stores the history for future auditing.
 
 ## 🚀 How to Run (Preview)
 
@@ -94,6 +94,9 @@ Based on an inspection of the current project structure, here is what has been a
 - **Payment Conciliation Logic:** Mock logic added in `AuditoriaService` to flag suspicious behavior (e.g., interacted with items and left without paying).
 - **Reporting Dashboard:** Created `DashboardController` and frontend interface to visualize stored interactions and customer journeys.
 - **Docker and Database Environment Setup:** Full containerization with `docker-compose.yml` for MySQL 8.0, Spring Boot Backend, and Python AI-Engine (Headless).
+- **Cloud Deployment:** Successfully hosted the application on Render.com, transitioning to a PostgreSQL database for the production environment.
+- **Dashboard Simulation Enhancements:** Added dynamic date and time stamping to simulation logs, with visual distinctions for newly simulated entries, facilitating robust recruiter demonstrations.
+- **UI/UX Modernization:** Enhanced visual components such as the Header, ensuring a polished, modern aesthetic and improved layout consistency.
 
 ### 🚧 To Do
 - **Real-time RTSP/NVR Integration:** Connect the AI-Engine to real IP cameras instead of local webcams.

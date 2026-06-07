@@ -13,32 +13,43 @@ import com.minimarket.backend_api.repository.EventoRepository;
 import com.minimarket.backend_api.service.AuditoriaService;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/events")
 public class MonitoramentoController {
 
-    // Injetando a interface que fala com o MySQL
+    private static final Logger logger = LoggerFactory.getLogger(MonitoramentoController.class);
+
     @Autowired
     private EventoRepository repository;
 
     @PostMapping
     @Transactional
     public ResponseEntity<Void> registrarEvento(@RequestBody EventoDTO dto) {
+        try {
+            // 1. Converter o DTO (que vem do Python) para a Entity (que vai pro Banco)
+            Evento novoEvento = new Evento();
+            novoEvento.setPersonId(dto.personId());
+            novoEvento.setAction(dto.action());
+            novoEvento.setLocation(dto.location());
+            novoEvento.setTimestamp(LocalDateTime.now());
 
-        // 1. Converter o DTO (que vem do Python) para a Entity (que vai pro Banco)
-        Evento novoEvento = new Evento();
-        novoEvento.setPersonId(dto.personId());
-        novoEvento.setAction(dto.action());
-        novoEvento.setLocation(dto.location());
-        novoEvento.setTimestamp(LocalDateTime.now());
+            logger.info(">>> Recebendo evento: person_id={}, action={}, location={}",
+                    dto.personId(), dto.action(), dto.location());
 
-        System.out.println(">>> Tentando salvar no MySQL...");
-        repository.save(novoEvento);
-        System.out.println(">>> Salvo com sucesso!");
+            // Salvar no banco de dados
+            Evento eventoSalvo = repository.save(novoEvento);
+            logger.info(">>> EVENTO PERSISTIDO COM SUCESSO! ID={}", eventoSalvo.getId());
 
-        // 3. Retornar 201 Created para o Python saber que deu certo
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+            // 3. Retornar 201 Created para o Python saber que deu certo
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        } catch (Exception e) {
+            logger.error(">>> ERRO AO SALVAR EVENTO: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @Autowired

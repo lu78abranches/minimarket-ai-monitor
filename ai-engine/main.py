@@ -10,12 +10,39 @@ def run():
     backend_url = os.getenv("BACKEND_URL", "http://localhost:8082/api/events")
     headless = os.getenv("HEADLESS", "False").lower() == "true"
     video_source = os.getenv("VIDEO_SOURCE", "0")
+    test_mode = os.getenv("TEST_MODE", "false").lower() == "true"
     
     # Convert video_source to int if it's a digit (for webcam index)
     if video_source.isdigit():
         video_source = int(video_source)
 
+    # Test mode: send sample events without needing a camera
+    if test_mode:
+        print("[TEST MODE] Sending sample events to backend...")
+        event_service = EventService(backend_url)
+        
+        test_events = [
+            ("person_001", "ENTER"),
+            ("person_001", "FRIDGE_INTERACTION"),
+            ("person_001", "EXIT"),
+        ]
+        
+        for person_id, action in test_events:
+            event_service.send_event(person_id=person_id, action=action)
+            time.sleep(2)
+        
+        print("[TEST MODE] Test events sent successfully!")
+        return
+
     cap = cv2.VideoCapture(video_source) 
+    
+    if not cap.isOpened():
+        print(f"[ERROR] Could not open video source: {video_source}")
+        print("[INFO] For Render deployment without camera:")
+        print("[INFO] Set environment variable TEST_MODE=true")
+        print("[INFO] Or provide VIDEO_SOURCE=/path/to/video.mp4")
+        return
+    
     monitor = MarketMonitor()
     event_service = EventService(backend_url)
 

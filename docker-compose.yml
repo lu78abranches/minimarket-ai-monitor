@@ -37,8 +37,11 @@ services:
     environment:
       - BACKEND_URL=http://backend:8082/api/events
       - HEADLESS=True
-      # Se quiser rodar com um arquivo de vídeo em vez de webcam:
-      # - VIDEO_SOURCE=/app/data/video.mp4 
+      - TEST_MODE=true
+      # OPTIONS FOR VIDEO SOURCE:
+      # 1. For webcam (local only): VIDEO_SOURCE=0
+      # 2. For video file: VIDEO_SOURCE=/app/data/video.mp4
+      # 3. For test mode (no camera/file): TEST_MODE=true
     volumes:
       - ./ai-engine:/app
 

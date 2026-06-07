@@ -29,6 +29,12 @@ public class MonitoramentoController {
     @Transactional
     public ResponseEntity<Void> registrarEvento(@RequestBody EventoDTO dto) {
         try {
+            logger.info("======================================");
+            logger.info(">>> POST RECEBIDO NO BACKEND!");
+            logger.info(">>> person_id={}, action={}, location={}",
+                    dto.personId(), dto.action(), dto.location());
+            logger.info("======================================");
+
             // 1. Converter o DTO (que vem do Python) para a Entity (que vai pro Banco)
             Evento novoEvento = new Evento();
             novoEvento.setPersonId(dto.personId());
@@ -36,20 +42,25 @@ public class MonitoramentoController {
             novoEvento.setLocation(dto.location());
             novoEvento.setTimestamp(LocalDateTime.now());
 
-            logger.info(">>> Recebendo evento: person_id={}, action={}, location={}",
-                    dto.personId(), dto.action(), dto.location());
-
             // Salvar no banco de dados
             Evento eventoSalvo = repository.save(novoEvento);
-            logger.info(">>> EVENTO PERSISTIDO COM SUCESSO! ID={}", eventoSalvo.getId());
+            logger.info(">>> ✓ EVENTO PERSISTIDO COM SUCESSO NO POSTGRESQL! ID={}", eventoSalvo.getId());
+            logger.info("======================================");
 
             // 3. Retornar 201 Created para o Python saber que deu certo
             return ResponseEntity.status(HttpStatus.CREATED).build();
 
         } catch (Exception e) {
-            logger.error(">>> ERRO AO SALVAR EVENTO: {}", e.getMessage(), e);
+            logger.error(">>> ✗ ERRO AO SALVAR EVENTO: {}", e.getMessage(), e);
+            logger.error(">>> Stack trace completo:", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        logger.info(">>> Health check endpoint called");
+        return ResponseEntity.ok("Backend API is running!");
     }
 
     @Autowired

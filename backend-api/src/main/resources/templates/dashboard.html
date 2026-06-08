@@ -468,55 +468,71 @@
             cenarioAtual = cenario;
             idAtual = id;
 
-            /* LOGICA ORIGINAL COMENTADA (PARA USO FUTURO)
+            console.log("Iniciando sequência de eventos para:", cenario);
+
             // Evento 1: Cliente entra na loja
             await enviarPost(id, 'ENTER', 'PORTA_ENTRADA', 0);
+            await delay(500);
 
             // Eventos 2: IA detecta manuseio ou retirada baseado no cenário
             if (cenario === 'Cenario_Normal') {
                 await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_BEBIDAS', 0);
+                await delay(500);
                 await enviarPost(id, 'PRODUCT_TAKEN', 'MOVEL_PRINCIPAL_2M', 0);
             }
             else if (cenario === 'Cenario_Visita') {
                 await enviarPost(id, 'FRIDGE_INTERACTION', 'GELADEIRA_BEBIDAS', 0);
+                await delay(500);
                 await enviarPost(id, 'FRIDGE_INTERACTION', 'MOVEL_PRINCIPAL_2M', 0);
             }
             else if (cenario === 'Cenario_Furto_Total') {
                 await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_BEBIDAS', 0);
+                await delay(500);
                 await enviarPost(id, 'PRODUCT_TAKEN', 'PRATELEIRA_DOCES', 0);
             }
             else if (cenario === 'Cenario_Furto_Parcial') {
                 await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_BEBIDAS', 0);
+                await delay(500);
                 await enviarPost(id, 'PRODUCT_TAKEN', 'PRATELEIRA_DOCES', 0);
+                await delay(500);
                 await enviarPost(id, 'PRODUCT_TAKEN', 'GELADEIRA_LATICINIOS', 0);
             }
 
             // Evento 3: Cliente sai e o caixa (PDV) informa quantos itens foram pagos
+            await delay(500);
             await enviarPost(id, 'EXIT', 'PORTA_SAIDA', itensPagos);
-            */
 
-            console.log("Simulando sequência de eventos para:", cenario);
+            console.log("Sequência de eventos concluída para:", cenario);
 
-            // --- CORREÇÃO DO TIMEOUT ---
             const videoElement = document.getElementById("simuladorVideo");
             videoElement.onended = function () {
                 console.log("Vídeo finalizado. Adicionando dados fictícios...");
-                // Em vez de recarregar, adicionamos a linha simulada
                 adicionarLinhaSimulada(idAtual, cenarioAtual);
-                
-                // location.reload(); // Comentado conforme pedido
             };
         }
 
-        function enviarPost(id, acao, local, pagos) {
-            /* 
-            return fetch('/api/events', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ personId: id, action: acao, location: local, itensPagos: pagos })
-            });
-            */
-            console.log("Mock POST:", {id, acao, local, pagos});
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function enviarPost(id, acao, local, pagos) {
+            try {
+                const response = await fetch('/api/events', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ personId: id, action: acao, location: local, itensPagos: pagos })
+                });
+
+                if (!response.ok) {
+                    console.error('Falha ao enviar evento:', response.status, response.statusText);
+                } else {
+                    console.log('Evento enviado com sucesso:', {id, acao, local, pagos});
+                }
+                return response;
+            } catch (error) {
+                console.error('Erro ao enviar evento:', error);
+                return null;
+            }
         }
 
         // LÓGICA DE SIMULAÇÃO DOS CENÁRIOS (INTEGRADO)
